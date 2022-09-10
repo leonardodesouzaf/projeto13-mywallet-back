@@ -20,7 +20,6 @@ app.use(cors());
 app.use(express.json());
 
 app.post('/sign-up', async (req,res) => {
-    await mongoClient.connect();
     try {
         const user = req.body;
         let haveAlready = true;
@@ -57,7 +56,6 @@ app.post('/sign-up', async (req,res) => {
 });
 
 app.post("/sign-in", async (req, res) => {
-    await mongoClient.connect();
     try {
             const user = req.body;
             const userDB = await db.collection('users').findOne({ email: user.email });
@@ -78,6 +76,31 @@ app.post("/sign-in", async (req, res) => {
         return res.status(500).send('Não foi possível conectar ao servidor!');
     }
 });
+
+app.get('/home', async function (req,res) {
+    try {
+        const { authorization } = req.headers;
+        const token = authorization?.replace('Bearer ', '');
+        if(!token) return res.status(401).send('Login não autorizado!');
+        const session = await db.collection("sessions").findOne({ token });       
+        if (!session) {
+            return res.status(401).send('Login não autorizado!'); 
+        }
+        const user = await db.collection("users").findOne({ _id: session.userId })
+        if(user) {
+            await db.collection("transactions").find().toArray().then(usersArray => {
+                return res.send(usersArray);
+            });
+        } else {
+            return res.status(401).send('Login não autorizado!'); 
+        }
+     } catch (error) {
+        res.status(500).send('Não foi possível conectar ao servidor!');
+     }
+});
+
+
+
 
 
 
