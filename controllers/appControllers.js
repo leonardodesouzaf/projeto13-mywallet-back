@@ -42,6 +42,7 @@ export async function inTransaction (req, res){
     }
 };
 
+
 export async function outTransaction (req, res){
     try {
         const user = res.locals.user;
