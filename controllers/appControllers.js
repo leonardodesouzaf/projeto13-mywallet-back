@@ -25,7 +25,7 @@ export async function inTransaction (req, res){
             const transaction = req.body;
             db.collection('transactions').insertOne(
                 { 
-                    value: transaction.value,
+                    value: parseFloat(transaction.value).toFixed(2),
                     description: transaction.description,
                     date: dayjs().format('DD/MM'),
                     userId: user._id,
@@ -50,7 +50,7 @@ export async function outTransaction (req, res){
             const transaction = req.body;
             db.collection('transactions').insertOne(
                 { 
-                    value: transaction.value,
+                    value: ((parseFloat(transaction.value))*(-1)).toFixed(2),
                     description: transaction.description,
                     date: dayjs().format('DD/MM'),
                     userId: user._id,

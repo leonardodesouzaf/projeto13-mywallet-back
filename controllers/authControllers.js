@@ -17,7 +17,10 @@ export async function signIn (req, res){
                     userId: userDB._id
                 }
             );
-            return res.status(201).send(token);
+            return res.status(201).send({
+                token: token,
+                name: userDB.name
+            });
         } else { 
             return res.status(401).send('Login não autorizado!'); 
         };
